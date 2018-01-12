@@ -1,53 +1,17 @@
 FROM ubuntu:16.04
-MAINTAINER Isac Cavalcante "isaccavalcante@alu.ufc.br"
-
+MAINTAINER Isac C. "isaccavalcante@alu.ufc.br"
+ADD . /app
 WORKDIR /app
+EXPOSE 8001
 
-ADD requirements.txt /app
-
-RUN apt update \
-    && apt-get install -y \
-    software-properties-common \
-    wget
-
-RUN add-apt-repository ppa:jonathonf/python-3.6 -y \
-    && apt-get update \
-    && apt-get install -y \
-    python3.6 \
-    python3.6-dev 
+RUN apt update -y && apt-get install -y \
+    python3 \
+    python3-pip \
+    python3-dev \
+    python3-lxml \
+    build-essential 
     
-RUN wget https://bootstrap.pypa.io/get-pip.py \
-    && python3.6 get-pip.py \
-    && ln -s /usr/bin/python3.6 /usr/local/bin/python3
-
-RUN apt-get install -y \
-    build-essential \
-    qt5-default \
-    libqt5webkit5-dev \
-    software-properties-common \
-    git \
-    sox \
-    xvfb \
-    cmake \
-    libjpeg8 \
-    libjpeg62-dev \
-    libfreetype6 \
-    libleptonica-dev \
-    libtesseract-dev  \
-    imagemagick
-
 RUN pip3 install --upgrade pip && pip3 install -r requirements.txt 
 
-RUN pip3 install dryscrape
+ENV PYTHONUNBUFFERED="TRUE"
 
-RUN git clone https://github.com/brunomacabeusbr/pyslibtesseract.git \
-    && cd pyslibtesseract \
-    && cd src/cppcode/ \
-    && cmake . \ 
-    && make \
-    && cd ../.. \
-    && python3 setup.py install  
-
-RUN wget https://github.com/tesseract-ocr/tessdata/raw/master/eng.traineddata
-
-ENV TESSDATA_PREFIX="/app"
